@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 rootProject.name = "V2FC"
 include(":app")
 include(":V2FC")
-includeBuild("../../PluginVersion")

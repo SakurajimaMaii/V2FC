@@ -1,19 +1,16 @@
-import com.pluginversion.vastgui.Version
-
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    id("com.pluginversion.vastgui")
     `maven-publish`
 }
 
 android {
     namespace = "com.v2fc.vastgui"
-    compileSdk = Version.compile_sdk_version
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = Version.min_sdk_version
+        minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -30,12 +27,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = Version.java_version
-        targetCompatibility = Version.java_version
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = Version.java_version.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     buildFeatures {
