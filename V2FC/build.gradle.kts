@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
     id("com.pluginversion.vastgui")
+    `maven-publish`
 }
 
 android {
@@ -58,4 +59,17 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+}
+
+publishing{
+    publications {
+        register<MavenPublication>("release"){
+            groupId="io.github.sakurajimamaii"
+            artifactId="v2fc"
+            version="0.0.1"
+            afterEvaluate{
+                from(components["release"])
+            }
+        }
+    }
 }
