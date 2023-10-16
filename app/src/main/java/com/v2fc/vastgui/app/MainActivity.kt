@@ -3,11 +3,15 @@ package com.v2fc.vastgui.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,11 +23,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.v2fc.vastgui.app.ui.theme.V2FCTheme
-import com.v2fc.vastgui.progress.ArcProgress
-import com.v2fc.vastgui.progress.ArcProgressDefaults
+import com.v2fc.vastgui.components.avatargroup.Avatar
+import com.v2fc.vastgui.components.avatargroup.AvatarGroup
+import com.v2fc.vastgui.components.avatargroup.AvatarSize
+import com.v2fc.vastgui.components.avatargroup.OVERLAP_END
+import com.v2fc.vastgui.components.progress.ArcProgress
+import com.v2fc.vastgui.components.progress.ArcProgressDefaults
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,24 +86,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     V2FCTheme {
-        val colorStops = arrayOf(
-            0.0f to Color.Yellow,
-            0.2f to Color.Red,
-            1f to Color.Blue
-        )
-        ArcProgress(
-            100f.dp,
-            20f.dp,
-            endPointRadius = 25f.dp,
-            modifier = Modifier
-                .padding(20f.dp)
-                .size(300f.dp),
-            colors = ArcProgressDefaults.brush(
-                Brush.horizontalGradient(colorStops = colorStops)
-            ),
-            currentProgress = 1f
-        ) {
 
-        }
     }
 }

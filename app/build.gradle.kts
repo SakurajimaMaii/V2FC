@@ -57,6 +57,7 @@ android {
 dependencies {
     implementation(project(":V2FC"))
     implementation(libs.core.ktx)
+    implementation(libs.coil.compose)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))

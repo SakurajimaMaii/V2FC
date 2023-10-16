@@ -1,4 +1,4 @@
-package com.v2fc.vastgui.progress
+package com.v2fc.vastgui.components.progress
 
 import android.content.res.Resources
 import android.util.TypedValue
@@ -37,9 +37,6 @@ import kotlin.math.sin
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
 // Date: 2023/10/15
-// Description: 
-// Documentation:
-// Reference:
 
 /**
  * Arc Progress Colors.

@@ -1,0 +1,43 @@
+package com.v2fc.vastgui.app.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.v2fc.vastgui.app.ui.theme.V2FCTheme
+import com.v2fc.vastgui.components.avatargroup.Avatar
+import com.v2fc.vastgui.components.avatargroup.AvatarGroup
+
+// Author: Vast Gui
+// Email: guihy2019@gmail.com
+// Date: 2023/10/16
+// Description: 
+// Documentation:
+// Reference:
+
+@Preview(showBackground = true)
+@Composable
+fun AvatarGroupPreview() {
+    V2FCTheme {
+        AvatarGroup(modifier = Modifier.background(Color.Black), overlapDistance = 20f.dp) { distance ->
+            (0..3).forEach {
+                Avatar(cropped = it != 3, overlapDistance = distance) { modifier ->
+                    AsyncImage(
+                        modifier = modifier,
+                        model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjhxEeGeg72g5XeSWq78kszW1jGLi1FKKcLQ&usqp=CAU",
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+            }
+        }
+    }
+}
