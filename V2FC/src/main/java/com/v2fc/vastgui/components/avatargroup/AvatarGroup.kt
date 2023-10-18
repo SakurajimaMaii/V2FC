@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +44,7 @@ import com.v2fc.vastgui.utils.toPx
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
 // Date: 2023/10/16
+// Documentation: https://github.com/SakurajimaMaii/V2FC/wiki/AvatarGroup
 // Reference: https://blog.csdn.net/u011897062/article/details/129821121
 
 internal val DEFAULT_MARGIN = 4f.dp

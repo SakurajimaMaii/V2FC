@@ -52,7 +52,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -65,9 +64,7 @@ import kotlinx.coroutines.launch
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
 // Date: 2023/10/17
-// Description: 
-// Documentation:
-// Reference:
+// Documentation: https://github.com/SakurajimaMaii/V2FC/wiki/DarkMask
 
 class DarkActivity : ComponentActivity() {
 

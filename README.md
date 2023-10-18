@@ -10,6 +10,8 @@ Vast View for [Compose](https://developer.android.com/jetpack/compose?hl=zh-cn)
 ## Currently Support
 
 - [x] ArcProgress
+- [x] AvatarGroup
+- [x] DarkMask
 
 ## Quick Start
 
