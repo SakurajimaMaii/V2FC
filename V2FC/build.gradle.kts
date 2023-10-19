@@ -66,8 +66,11 @@ android {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
 dependencies {
-    implementation(libs.vast.tools)
     implementation(libs.core.ktx)
     implementation(libs.constraintlayout.compose)
     implementation(libs.lifecycle.runtime.ktx)
@@ -85,9 +88,10 @@ dependencies {
 publishing{
     publications {
         register<MavenPublication>("release"){
+            artifact(javadocJar.get())
             groupId="com.github.SakurajimaMaii"
             artifactId="v2fc"
-            version="0.0.3"
+            version="0.0.4"
             afterEvaluate{
                 from(components["release"])
             }

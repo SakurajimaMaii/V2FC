@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.0-alpha07"
+android-maven-gradle-plugin = "2.1"
 kotlin = "1.9.0"
 core-ktx = "1.12.0"
 junit = "4.13.2"
@@ -12,7 +13,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 coil = "2.4.0"
 constraintlayout-compose = "1.0.1"
-v2fc = "0.0.2"
+v2fc = "0.0.3"
 vasttools = "0.5.5"
 
 [libraries]

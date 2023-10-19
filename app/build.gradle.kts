@@ -73,6 +73,7 @@ android {
 dependencies {
     implementation(libs.vast.tools)
     // implementation(project(":V2FC"))
+    implementation("com.github.stars-one:xAndroidUtil:0.9.22")
     implementation(libs.v2fc)
     implementation(libs.core.ktx)
     implementation(libs.coil.compose)

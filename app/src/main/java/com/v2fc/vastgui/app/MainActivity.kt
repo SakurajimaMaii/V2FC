@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ave.vastgui.tools.utils.ScreenSizeUtils
 import com.v2fc.vastgui.app.ui.theme.V2FCTheme
+import site.starsone.xandroidutil.util.XActivityUtil.joinQqGroup
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                 }
             }
         }
