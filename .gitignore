@@ -1,9 +1,55 @@
-*.iml
+# Built application files
+*.apk
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+libraries/build/
+
+# Gradle files
 .gradle
-.idea
+
+# IntelliJ
+*.iml
+.idea/
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# docs
+docs/
+
+.settings
+.project
+
+/local.properties
+
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
+gradle.properties
+
+# Publish
+publish-mavencentral.gradle
+
+#output
+debug/
+release/
+buildSrc/build
+libraries/*/build
+skin/darkskin/build
+
+*.jar

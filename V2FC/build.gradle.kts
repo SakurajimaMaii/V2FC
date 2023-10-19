@@ -18,7 +18,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    `maven-publish`
+    id("convention.publication")
 }
 
 android {
@@ -66,10 +66,6 @@ android {
     }
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.constraintlayout.compose)
@@ -85,14 +81,18 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 }
 
-publishing{
+extra["PUBLISH_ARTIFACT_ID"] = "v2fc"
+extra["PUBLISH_DESCRIPTION"] = "Vast View for Compose."
+extra["PUBLISH_URL"] = "https://github.com/SakurajimaMaii/V2FC"
+
+publishing {
     publications {
-        register<MavenPublication>("release"){
-            artifact(javadocJar.get())
-            groupId="com.github.SakurajimaMaii"
+        register<MavenPublication>("release") {
+            groupId = "io.github.sakurajimamaii"
             artifactId="v2fc"
-            version="0.0.4"
-            afterEvaluate{
+            version="0.1.0"
+
+            afterEvaluate {
                 from(components["release"])
             }
         }

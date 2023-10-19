@@ -14,28 +14,10 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
+plugins {
+    `kotlin-dsl` // Is needed to turn our build logic written in Kotlin into the Gradle Plugin
 }
 
-rootProject.name = "V2FC"
-include(":app")
-include(":V2FC")
-includeBuild("convention-plugins")
+repositories {
+    gradlePluginPortal() // To use 'maven-publish' and 'signing' plugins in our own plugin
+}

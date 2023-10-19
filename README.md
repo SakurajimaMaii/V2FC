@@ -15,24 +15,14 @@ Vast View for [Compose](https://developer.android.com/jetpack/compose?hl=zh-cn)
 
 ## Quick Start
 
-### Add the JitPack repository to your build file
-
-```groovy
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
-
-### Add the dependency
-
-tag: ![Jitpack version](https://jitpack.io/v/SakurajimaMaii/v2fc.svg)
+tag: ![version](https://img.shields.io/maven-central/v/io.github.sakurajimamaii/v2fc)
 
 ```groovy
 dependencies {
-        implementation 'com.github.SakurajimaMaii:v2fc:Tag'
+    implementation 'io.github.sakurajimamaii:v2fc:Tag'
 }
 ```
+
+## Document
+
+Click [github.com/SakurajimaMaii/V2FC/wiki](github.com/SakurajimaMaii/V2FC/wiki) to see the document.
