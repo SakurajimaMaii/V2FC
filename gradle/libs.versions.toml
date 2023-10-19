@@ -12,6 +12,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 coil = "2.4.0"
 constraintlayout-compose = "1.0.1"
+v2fc = "0.0.2"
 vasttools = "0.5.5"
 
 [libraries]
@@ -33,6 +34,7 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayout-compose" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+v2fc = { module = "com.github.SakurajimaMaii:v2fc", version.ref = "v2fc" }
 vast-tools = { group = "io.github.sakurajimamaii", name = "VastTools", version.ref = "vasttools" }
 
 [plugins]

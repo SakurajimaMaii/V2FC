@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.v2fc.vastgui.app.component
+package com.v2fc.vastgui.app.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

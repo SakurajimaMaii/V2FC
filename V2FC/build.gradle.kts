@@ -58,6 +58,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -81,7 +87,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId="com.github.SakurajimaMaii"
             artifactId="v2fc"
-            version="0.0.2"
+            version="0.0.3"
             afterEvaluate{
                 from(components["release"])
             }

@@ -72,7 +72,8 @@ android {
 
 dependencies {
     implementation(libs.vast.tools)
-    implementation(project(":V2FC"))
+    // implementation(project(":V2FC"))
+    implementation(libs.v2fc)
     implementation(libs.core.ktx)
     implementation(libs.coil.compose)
     implementation(libs.constraintlayout.compose)
