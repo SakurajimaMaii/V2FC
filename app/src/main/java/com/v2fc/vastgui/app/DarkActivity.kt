@@ -17,6 +17,7 @@
 package com.v2fc.vastgui.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.v2fc.vastgui.app.ui.theme.V2FCTheme
 import com.v2fc.vastgui.components.darkmask.DarkMask
+import com.v2fc.vastgui.components.darkmask.MaskState
 import kotlinx.coroutines.launch
 
 // Author: Vast Gui
@@ -77,11 +79,9 @@ class DarkActivity : ComponentActivity() {
             var iconX by remember { mutableFloatStateOf(0f) }
             var iconY by remember { mutableFloatStateOf(0f) }
             V2FCTheme(isDark) {
-                DarkMask(
-                    maskCenterX = iconX,
-                    maskCenterY = iconY,
-                    onValueChanged = { isDark = it }
-                ) { clickEvent ->
+                DarkMask(maskCenterX = iconX, maskCenterY = iconY, onValueChanged = {
+                    isDark = it
+                }) { maskActive ->
                     ModalNavigationDrawer(
                         drawerState = drawerState,
                         drawerContent = {
@@ -100,7 +100,7 @@ class DarkActivity : ComponentActivity() {
                                         fontSize = 32f.sp
                                     )
                                     IconButton(
-                                        onClick = { clickEvent() },
+                                        onClick = { maskActive(MaskState.Collapsed) },
                                         modifier = Modifier
                                             .align(Alignment.CenterVertically)
                                             .onGloballyPositioned { coordinates ->

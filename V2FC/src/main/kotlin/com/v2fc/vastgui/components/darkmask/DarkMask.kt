@@ -16,19 +16,24 @@
 
 package com.v2fc.vastgui.components.darkmask
 
+import android.animation.Animator
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.os.Build
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import android.util.Log
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +46,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalView
+import androidx.core.animation.addListener
 import androidx.core.graphics.applyCanvas
 import kotlin.math.hypot
 import kotlin.math.roundToInt
@@ -51,16 +57,27 @@ import kotlin.math.roundToInt
 // Documentation: https://github.com/SakurajimaMaii/V2FC/wiki/DarkMask
 
 /**
+ * Mask State.
+ *
+ * @since 0.1.1
+ */
+enum class MaskState {
+    Collapsed,
+    Expanded
+}
+
+/**
  * Dark Mask.
  *
  * @param initIsDark True if the system in dark mode,false otherwise.
  * @param onValueChanged Callback when the mode is changed.
  * @param maskCenterX The x coordinate of mask circle center.
  * @param maskCenterY The y coordinate of mask circle center.
- * @param maskAnimationSpec The animation that will be used to change
- * the value of mask circle radius.
+ * @param maskDuration Sets the length of the mask animation.
+ * @param maskInterpolator The time interpolator used in calculating the elapsed fraction of
+ * mask animation.
  * @param content The content scope.
- * @since 0.0.2
+ * @since 0.1.1
  */
 @Composable
 fun DarkMask(
@@ -68,28 +85,27 @@ fun DarkMask(
     onValueChanged: (Boolean) -> Unit = { },
     maskCenterX: Float = 0f,
     maskCenterY: Float = 0f,
-    maskAnimationSpec: AnimationSpec<Float> = tween(1000),
-    content: @Composable ((() -> Unit) -> Unit)
+    maskDuration: Long = 1000L,
+    maskInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    content: @Composable (((MaskState) -> Unit) -> Unit)
 ) {
     var isAnimRunning by remember { mutableStateOf(false) }
     var isDark by remember { mutableStateOf(initIsDark) }
     val view = LocalView.current.rootView
+    val viewDiagonal = hypot(view.width.toFloat(), view.height.toFloat())
     var viewBounds by remember { mutableStateOf<Rect?>(null) }
     val (viewSnapshot, updateViewSnapshot) = remember { mutableStateOf<Bitmap?>(null) }
-    val maskRadius by animateFloatAsState(
-        targetValue = if (isDark) hypot(view.width.toFloat(), view.height.toFloat()) else 0f,
-        animationSpec = maskAnimationSpec,
-        label = "Mask Animation",
-        finishedListener = {
-            updateViewSnapshot(null)
-            isAnimRunning = false
-        }
-    )
-    val clickEvent: () -> Unit = clickEvent@{
+    var maskState: MaskState by remember { mutableStateOf(MaskState.Collapsed) }
+    var maskRadius by remember { mutableFloatStateOf(0f) }
+    val maskActive: (MaskState) -> Unit = maskActive@{
         if (!isAnimRunning) {
             isDark = !isDark
             isAnimRunning = true
-            val bounds = viewBounds ?: return@clickEvent
+            val bounds = viewBounds ?: return@maskActive
+            val range = when (it) {
+                MaskState.Collapsed -> viewDiagonal to 0f
+                MaskState.Expanded -> 0f to viewDiagonal
+            }
             val image = Bitmap
                 .createBitmap(
                     bounds.width.roundToInt(),
@@ -102,6 +118,18 @@ fun DarkMask(
                 }
             updateViewSnapshot(image)
             onValueChanged(isDark)
+            maskState = it
+            ValueAnimator.ofFloat(range.first, range.second).apply {
+                this.duration = maskDuration
+                this.interpolator = maskInterpolator
+                addUpdateListener { valueAnimator ->
+                    maskRadius = valueAnimator.animatedValue as Float
+                }
+                addListener(onEnd = {
+                    updateViewSnapshot(null)
+                    isAnimRunning = false
+                })
+            }.start()
         }
     }
     Surface(
@@ -115,7 +143,7 @@ fun DarkMask(
                 }
             }
             .drawWithCache {
-                val xfermode = if (isDark)
+                val xfermode = if (maskState == MaskState.Expanded)
                     PorterDuffXfermode(PorterDuff.Mode.CLEAR)
                 else
                     PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
@@ -127,7 +155,7 @@ fun DarkMask(
                     with(drawContext.canvas.nativeCanvas) {
                         if (viewSnapshot != null) {
                             val checkPoint = saveLayer(null, null)
-                            if (isDark) {
+                            if (maskState == MaskState.Expanded) {
                                 drawBitmap(viewSnapshot, 0f, 0f, null)
                                 paint.xfermode = xfermode
                                 drawCircle(maskCenterX, maskCenterY, maskRadius, paint)
@@ -144,6 +172,6 @@ fun DarkMask(
                 }
             }
     ) {
-        content(clickEvent)
+        content(maskActive)
     }
 }
