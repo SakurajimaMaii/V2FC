@@ -19,7 +19,9 @@ package com.v2fc.vastgui.app.ui.component
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.EaseOutBack
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -78,19 +80,28 @@ fun CircleMaskPreview() {
     var size by remember { mutableStateOf(Offset(0f, 0f)) }
     var circleMaskState by remember { mutableStateOf(CircleMaskState.End) }
     val transition = updateTransition(circleMaskState, label = "Circle mask state")
-    val radius by transition.animateFloat(label = "Circle mask radius") { state ->
+    val radius by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 1000, easing = EaseOutBack) },
+        label = "Circle mask radius"
+    ) { state ->
         when (state) {
             CircleMaskState.Start -> hypot(size.x, size.y) * 1.2f
             CircleMaskState.End -> 0f
         }
     }
-    val color by transition.animateColor(label = "Circle mask content tint color") { state ->
+    val color by transition.animateColor(
+        transitionSpec = { tween(durationMillis = 1000, easing = EaseOutBack) },
+        label = "Circle mask content tint color"
+    ) { state ->
         when (state) {
             CircleMaskState.Start -> Color.White
             CircleMaskState.End -> Color.Black
         }
     }
-    val alpha by transition.animateFloat(label = "Arrow alpha animation") { state ->
+    val alpha by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 1000, easing = EaseOutBack) },
+        label = "Arrow alpha animation"
+    ) { state ->
         when (state) {
             CircleMaskState.Start -> 1f
             CircleMaskState.End -> 0f
@@ -191,12 +202,12 @@ fun CircleMaskPreview() {
             LottieAnimation(
                 composition = composition,
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(200.dp)
                     .constrainAs(icon) {
                         start.linkTo(parent.start)
                         top.linkTo(title.bottom, margin = 10.dp)
-                        end.linkTo(parent.end, margin = 10.dp)
-                        bottom.linkTo(subTitle.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(subTitle.top, margin = 10.dp)
                     },
                 iterations = LottieConstants.IterateForever,
                 contentScale = ContentScale.Fit,
