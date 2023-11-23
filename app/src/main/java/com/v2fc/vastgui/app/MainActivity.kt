@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ave.vastgui.tools.utils.ScreenSizeUtils
+import com.v2fc.vastgui.app.ui.component.CircleMaskPreview
 import com.v2fc.vastgui.app.ui.theme.V2FCTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    // CreditCard()
+                    CircleMaskPreview()
                 }
             }
         }

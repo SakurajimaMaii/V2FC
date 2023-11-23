@@ -56,7 +56,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     publishing {
@@ -90,7 +90,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "io.github.sakurajimamaii"
             artifactId="v2fc"
-            version="0.1.0"
+            version="0.1.1"
 
             afterEvaluate {
                 from(components["release"])
