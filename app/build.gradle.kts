@@ -60,7 +60,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
@@ -72,8 +72,10 @@ android {
 
 dependencies {
     implementation(libs.vast.tools)
+    implementation(libs.lottie.compose)
     implementation(project(":V2FC"))
 //    implementation(libs.v2fc)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.core.ktx)
     implementation(libs.coil.compose)
     implementation(libs.constraintlayout.compose)

@@ -54,7 +54,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.PointerEvent
-import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -78,15 +77,15 @@ import kotlin.math.hypot
 @Composable
 fun CircleMaskPreview() {
     var size by remember { mutableStateOf(Offset(0f, 0f)) }
-    var circleMaskState by remember { mutableStateOf(CircleMaskState.End) }
+    var circleMaskState by remember { mutableStateOf(CircleMaskState.Collapsed) }
     val transition = updateTransition(circleMaskState, label = "Circle mask state")
     val radius by transition.animateFloat(
         transitionSpec = { tween(durationMillis = 1000, easing = EaseOutBack) },
         label = "Circle mask radius"
     ) { state ->
         when (state) {
-            CircleMaskState.Start -> hypot(size.x, size.y) * 1.2f
-            CircleMaskState.End -> 0f
+            CircleMaskState.Expanded -> hypot(size.x, size.y) * 1.2f
+            CircleMaskState.Collapsed -> 0f
         }
     }
     val color by transition.animateColor(
@@ -94,8 +93,8 @@ fun CircleMaskPreview() {
         label = "Circle mask content tint color"
     ) { state ->
         when (state) {
-            CircleMaskState.Start -> Color.White
-            CircleMaskState.End -> Color.Black
+            CircleMaskState.Expanded -> Color.White
+            CircleMaskState.Collapsed -> Color.Black
         }
     }
     val alpha by transition.animateFloat(
@@ -103,8 +102,8 @@ fun CircleMaskPreview() {
         label = "Arrow alpha animation"
     ) { state ->
         when (state) {
-            CircleMaskState.Start -> 1f
-            CircleMaskState.End -> 0f
+            CircleMaskState.Expanded -> 1f
+            CircleMaskState.Collapsed -> 0f
         }
     }
     Box(
@@ -112,9 +111,11 @@ fun CircleMaskPreview() {
             .fillMaxSize()
             .background(Color.Gray)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    circleMaskState = CircleMaskState.End
-                })
+                detectTapGestures(
+                    onTap = {
+                        circleMaskState = CircleMaskState.Collapsed
+                    }
+                )
             },
         contentAlignment = Alignment.Center
     ) {
@@ -137,7 +138,7 @@ fun CircleMaskPreview() {
                 .padding(10.dp)
                 .pointerInput(Unit) {
                     awaitEachGesture {
-                        val event: PointerEvent = awaitPointerEvent(PointerEventPass.Initial)
+                        val event: PointerEvent = awaitPointerEvent()
                         val xCoordinate = event.changes[0].position.x
                         val yCoordinate = event.changes[0].position.y
                         val minDistance = listOf(
@@ -152,7 +153,7 @@ fun CircleMaskPreview() {
                             is RDistance -> Offset(size.x, yCoordinate)
                             is BDistance -> Offset(xCoordinate, size.y)
                         }
-                        circleMaskState = CircleMaskState.Start
+                        circleMaskState = CircleMaskState.Expanded
                     }
                 }
                 .drawWithContent {
@@ -231,8 +232,10 @@ fun CircleMaskPreview() {
     }
 }
 
-private enum class CircleMaskState { Start, End }
+/** Circle mask state. */
+private enum class CircleMaskState { Expanded, Collapsed }
 
+/** The distance between the pointer position and container element. */
 private sealed class Distance(val value: Float) : Comparable<Float> {
     override fun compareTo(other: Float): Int = (value - other).toInt()
 }
