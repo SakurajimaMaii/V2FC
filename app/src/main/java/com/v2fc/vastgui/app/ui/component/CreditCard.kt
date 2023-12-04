@@ -17,6 +17,7 @@
 package com.v2fc.vastgui.app.ui.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -110,16 +111,21 @@ fun CreditCard(
     ),
     colors: CreditCardColors = CreditCardDefaults.creditCardColors(contentColor = Color.White),
     @DrawableRes background: Int? = R.drawable.img_bridge,
-    animationSpec: AnimationSpec<Float> = tween(500)
+    animationSpec: AnimationSpec<Float> = tween(800)
 ) {
     var rotated by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
         targetValue = if (rotated) 180f else 0f,
         animationSpec = animationSpec,
-        label = "CreditCard Rotation"
+        label = "CreditCard Rotation Animation"
     )
-    val contentAlpha by animateFloatAsState(
+    val frontAlpha by animateFloatAsState(
         targetValue = if (!rotated) 1f else 0f,
+        animationSpec = animationSpec,
+        label = "CreditCard Content Alpha Animation"
+    )
+    val backAlpha by animateFloatAsState(
+        targetValue = if (rotated) 1f else 0f,
         animationSpec = animationSpec,
         label = "CreditCard Content Alpha Animation"
     )
@@ -141,7 +147,6 @@ fun CreditCard(
     }
     Card(
         modifier = Modifier
-            .wrapContentSize()
             .padding(10.dp)
             .graphicsLayer {
                 rotationY = rotation
@@ -154,14 +159,15 @@ fun CreditCard(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .animateContentSize()
                 .height(IntrinsicSize.Min)
+                .fillMaxWidth()
         ) {
             if (!rotated) {
                 ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .height(400.dp)
                 ) {
                     val (icon, brand, number, holder, date) = createRefs()
                     background?.apply {
@@ -169,7 +175,7 @@ fun CreditCard(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .graphicsLayer {
-                                    alpha = contentAlpha
+                                    alpha = frontAlpha
                                 },
                             contentScale = ContentScale.FillBounds,
                             painter = painterResource(this),
@@ -181,7 +187,7 @@ fun CreditCard(
                         contentDescription = "CreditCard Icon",
                         modifier = Modifier
                             .wrapContentSize()
-                            .graphicsLayer { alpha = contentAlpha }
+                            .graphicsLayer { alpha = frontAlpha }
                             .constrainAs(icon) {
                                 start.linkTo(parent.start, margin = 10.dp)
                                 top.linkTo(parent.top, margin = 10.dp)
@@ -193,7 +199,7 @@ fun CreditCard(
                         contentDescription = "CreditCard Brand",
                         modifier = Modifier
                             .wrapContentSize()
-                            .graphicsLayer { alpha = contentAlpha }
+                            .graphicsLayer { alpha = frontAlpha }
                             .constrainAs(brand) {
                                 end.linkTo(parent.end, margin = 10.dp)
                                 top.linkTo(parent.top, margin = 10.dp)
@@ -203,7 +209,7 @@ fun CreditCard(
                         text = bank.number,
                         color = colors.contentColor,
                         modifier = Modifier
-                            .graphicsLayer { alpha = contentAlpha }
+                            .graphicsLayer { alpha = frontAlpha }
                             .constrainAs(number) {
                                 start.linkTo(parent.start, margin = 10.dp)
                                 top.linkTo(icon.bottom)
@@ -216,7 +222,7 @@ fun CreditCard(
                         text = cardHolder,
                         color = colors.contentColor,
                         modifier = Modifier
-                            .graphicsLayer { alpha = contentAlpha }
+                            .graphicsLayer { alpha = frontAlpha }
                             .constrainAs(holder) {
                                 start.linkTo(parent.start, margin = 10.dp)
                                 bottom.linkTo(parent.bottom, margin = 10.dp)
@@ -227,7 +233,7 @@ fun CreditCard(
                         color = colors.contentColor,
                         modifier = Modifier
                             .graphicsLayer {
-                                alpha = contentAlpha
+                                alpha = frontAlpha
                             }
                             .constrainAs(date) {
                                 end.linkTo(parent.end, margin = 10.dp)
@@ -245,7 +251,7 @@ fun CreditCard(
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .graphicsLayer {
-                                alpha = (1f - contentAlpha)
+                                alpha = backAlpha
                             },
                         color = colors.magneticStripeColor,
                         thickness = 50.dp
@@ -258,7 +264,7 @@ fun CreditCard(
                             .background(colors.signatureAreaColor)
                             .fillMaxWidth()
                             .graphicsLayer {
-                                alpha = (1f - contentAlpha)
+                                alpha = backAlpha
                                 rotationY = rotation
                             }
                             .padding(10.dp),
@@ -271,7 +277,7 @@ fun CreditCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .graphicsLayer {
-                                alpha = (1f - contentAlpha)
+                                alpha = backAlpha
                                 rotationY = rotation
                             }
                             .padding(5.dp),
