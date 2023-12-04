@@ -26,3 +26,15 @@ dependencies {
 ## Document
 
 Click [github.com/SakurajimaMaii/V2FC/wiki](github.com/SakurajimaMaii/V2FC/wiki) to see the document.
+
+## Preview
+
+The following components are currently in preview only.
+
+### SegmentSlideSelector
+
+https://github.com/SakurajimaMaii/V2FC/assets/46998172/7a6ee85d-5396-4e41-8794-60fda2ca8f4f
+
+### SegmentScaleSelector
+
+https://github.com/SakurajimaMaii/V2FC/assets/46998172/a6566af5-09b5-4e44-acfc-1d744442246c
