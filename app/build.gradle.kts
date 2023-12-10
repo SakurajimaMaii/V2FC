@@ -18,6 +18,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -61,6 +62,10 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
+    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src/main/kotlin")
     }
 
     packaging {

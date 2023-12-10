@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ave.vastgui.tools.utils.ScreenSizeUtils
-import com.v2fc.vastgui.app.ui.component.SegmentSelectorSlidePreview
+import com.v2fc.vastgui.app.ui.component.SegmentSlideSelectorPreview
 import com.v2fc.vastgui.app.ui.theme.V2FCTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // CreditCard()
                     // CircleMaskPreview()
-                    SegmentSelectorSlidePreview()
+                    SegmentSlideSelectorPreview()
                 }
             }
         }

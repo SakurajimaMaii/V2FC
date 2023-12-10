@@ -2,10 +2,9 @@ package com.v2fc.vastgui.app.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
@@ -22,17 +21,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,37 +47,64 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ave.vastgui.tools.utils.DensityUtils
-import kotlinx.coroutines.launch
 
 // Author: Vast Gui
 // Email: guihy2019@gmail.com
 // Date: 2023/12/2
 
-// 开关状态示例
+// Switch example
 private val states = listOf("关闭", "打开")
 
-// 颜色示例
+// Color example
 private val colors = listOf("primary", "error", "warning", "success")
 
-// 尺寸示例
+// Dimension example
 private val dimensions = listOf("40", "60", "80")
 
-// 加载状态示例
+// Loading example
 private val loadingStates = listOf("是", "否")
 
-// 数字多级选择
+// Number example
 private val numbers = listOf("1", "2", "3", "4", "5")
 
 /**
- * 缩放背景分段选择器示例
+ * State of the [SegmentSelector] item.
+ *
+ * @property center The segment item center coordinate in [SegmentSelector] .
+ * @property size The segment item size in [SegmentSelector] .
+ */
+@Stable
+data class SegmentItemState internal constructor(
+    internal val center: Offset = Offset.Zero,
+    internal val size: Size = Size.Zero
+) {
+    /**
+     * The left-top coordinate of the segment item, it is used
+     * to determine the position of the active indicator.
+     */
+    internal val topLeft: Offset
+        get() {
+            val x = center.x - size.width / 2f
+            val y = center.y - size.height / 2f
+            return Offset(x, y)
+        }
+}
+
+@Composable
+fun rememberSegmentItemState() = remember {
+    mutableStateOf(SegmentItemState())
+}
+
+/**
+ * Example of SegmentSelector with zoomable active indicator.
  */
 @Preview(showBackground = true)
 @Composable
-fun SegmentScaleSelectorPreview() {
+fun SegmentZoomSelectorPreview() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,24 +112,24 @@ fun SegmentScaleSelectorPreview() {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text("状态")
-        SegmentScaleSelector(states)
+        SegmentZoomSelector(states)
         Text("颜色")
-        SegmentScaleSelector(colors)
+        SegmentZoomSelector(colors)
         Text("尺寸(单位40px)")
-        SegmentScaleSelector(dimensions)
+        SegmentZoomSelector(dimensions)
         Text("加载中")
-        SegmentScaleSelector(loadingStates)
+        SegmentZoomSelector(loadingStates)
         Text("最多五个")
-        SegmentScaleSelector(numbers)
+        SegmentZoomSelector(numbers)
     }
 }
 
 /**
- * 滑动背景分段选择器示例
+ * Example of SegmentSelector with sliding active indicator.
  */
 @Preview(showBackground = true)
 @Composable
-fun SegmentSelectorSlidePreview() {
+fun SegmentSlideSelectorPreview() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,74 +150,7 @@ fun SegmentSelectorSlidePreview() {
 }
 
 @Composable
-fun SegmentSlideSelector(selectors: List<String> = listOf()) {
-    var selectedItem by remember { mutableIntStateOf(0) }
-    var size by remember { mutableStateOf(Offset.Zero) }
-    var topLeft by remember { mutableStateOf(Offset.Zero) }
-    val leftAnimation = remember { Animatable(0f) }
-    val animationSpec = spring<Float>(
-        dampingRatio = Spring.DampingRatioLowBouncy,
-        stiffness = Spring.StiffnessVeryLow
-    )
-    val scope = rememberCoroutineScope()
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color(0XFFEEEEF0))
-            .drawWithContent {
-                drawRoundRect(
-                    color = Color(0xff2ecc71),
-                    topLeft = Offset(leftAnimation.value, topLeft.y),
-                    size = Size(size.x, size.y),
-                    cornerRadius = CornerRadius(8.dp.toPx())
-                )
-                drawContent()
-            },
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        selectors.forEachIndexed { index, item ->
-            SegmentItem(
-                onSizeChanged = { rectSize, rectCenter ->
-                    size = rectSize
-                    if (selectedItem == index) {
-                        topLeft = Offset(
-                            rectCenter.x - rectSize.x / 2f,
-                            rectCenter.y - rectSize.y / 2f
-                        )
-                    }
-                    if (leftAnimation.value == 0f) {
-                        scope.launch {
-                            leftAnimation.snapTo(topLeft.x)
-                        }
-                    }
-                },
-                onValueChanged = { rectSize, rectCenter ->
-                    selectedItem = index
-                    scope.launch {
-                        leftAnimation.animateTo(rectCenter.x - rectSize.x / 2f, animationSpec)
-                    }
-                }
-            ) {
-                val fontWeight by animateIntAsState(
-                    targetValue = if (selectedItem == index) FontWeight.Black.weight else FontWeight.Normal.weight,
-                    animationSpec = tween(),
-                    label = "FontWeight animation"
-                )
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    fontWeight = FontWeight(fontWeight)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SegmentScaleSelector(selectors: List<String> = listOf()) {
+fun SegmentZoomSelector(selectors: List<String> = listOf()) {
     var selectedItem by remember { mutableIntStateOf(0) }
     Row(
         modifier = Modifier
@@ -202,52 +163,105 @@ fun SegmentScaleSelector(selectors: List<String> = listOf()) {
     ) {
         selectors.forEachIndexed { index, item ->
             SegmentItem(
+                modifier = Modifier.padding(5.dp),
+                activeColor = Color(0xff2ecc71),
                 selected = selectedItem == index,
-                onValueChanged = {
+                onClick = {
                     selectedItem = index
                 }
             ) {
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    fontWeight = if (selectedItem == index) FontWeight.Black else FontWeight.Normal
-                )
+                Text(text = item, modifier = Modifier.padding(vertical = 5.dp))
             }
         }
     }
 }
 
-/**
- * 带有缩放背景的分段选择项。
- *
- * @param selected 用于判断该项是否被选中。
- * @param onValueChanged 当项目被选中时的回调。
- * @param content 用于展示选项内部内容。
- */
+@Composable
+fun SegmentSlideSelector(selectors: List<String> = listOf()) {
+    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
+    val animationSpec = spring<Float>(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessVeryLow
+    )
+    SegmentSelector(
+        modifier = Modifier
+            .padding(5.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0XFFEEEEF0)),
+        animationSpec = animationSpec,
+        activeColor = Color(0xff2ecc71)
+    ) { state ->
+        selectors.forEachIndexed { index, item ->
+            SegmentItem(
+                modifier = Modifier.padding(5.dp),
+                onStateChanged = state,
+                selected = selectedItem == index,
+                onClick = { selectedItem = index }
+            ) {
+                Text(text = item, modifier = Modifier.padding(vertical = 5.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun SegmentSelector(
+    modifier: Modifier = Modifier,
+    activeColor: Color = MaterialTheme.colorScheme.primary,
+    activeRadius: Dp = 8f.dp,
+    animationSpec: AnimationSpec<Float> = spring(),
+    content: @Composable RowScope.((SegmentItemState) -> Unit) -> Unit
+) {
+    val (state, onStateChanged) = rememberSegmentItemState()
+    val leftAnimation = remember { Animatable(state.topLeft.x) }
+    LaunchedEffect(state) {
+        leftAnimation.animateTo(state.topLeft.x, animationSpec)
+    }
+    Row(
+        modifier = modifier
+            .drawWithContent {
+                drawRoundRect(
+                    color = activeColor,
+                    topLeft = Offset(leftAnimation.value, state.topLeft.y),
+                    size = state.size,
+                    cornerRadius = CornerRadius(activeRadius.toPx())
+                )
+                drawContent()
+            },
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        content(onStateChanged)
+    }
+}
+
 @Composable
 fun RowScope.SegmentItem(
+    modifier: Modifier = Modifier,
+    activeColor: Color = MaterialTheme.colorScheme.primary,
     selected: Boolean = false,
-    onValueChanged: () -> Unit,
+    onClick: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
     var size by remember { mutableStateOf(Offset(0f, 0f)) }
     var cornerRadius by remember { mutableFloatStateOf(0f) }
     Box(
-        modifier = Modifier
-            .padding(5.dp)
+        modifier = modifier
             .weight(1f)
-            .wrapContentHeight()
             .onSizeChanged {
                 size = Offset(it.width.toFloat(), it.height.toFloat())
                 cornerRadius = it.width.coerceAtMost(it.height) / 6f
             }
             .pointerInput("click") {
                 detectTapGestures(onTap = {
-                    onValueChanged()
+                    onClick()
                 })
             },
         contentAlignment = Alignment.Center
     ) {
+        val density = LocalDensity.current
+        val width = with(density) { size.x.toDp() }
+        val height = with(density) { size.y.toDp() }
         this@SegmentItem.AnimatedVisibility(
             visible = selected,
             enter = scaleIn(),
@@ -255,9 +269,9 @@ fun RowScope.SegmentItem(
         ) {
             Box(
                 modifier = Modifier
-                    .size(DensityUtils.px2dp(size.x).dp, DensityUtils.px2dp(size.y).dp)
+                    .size(width, height)
                     .clip(RoundedCornerShape(CornerSize(cornerRadius)))
-                    .background(Color.White)
+                    .background(activeColor)
             )
         }
         content()
@@ -265,40 +279,46 @@ fun RowScope.SegmentItem(
 }
 
 /**
- * 无背景的分段选择项。
+ * SegmentItem for [SegmentSelector] .
  *
- * @param onSizeChanged 当选项确定位置后的回调，向外传递选项的大小
- * 和偏移值以便确定选中背景的初始位置。
- * @param onValueChanged 当项目被选中时的回调。
- * @param content 用于展示选项内部内容。
+ * @param onStateChanged Updates the segment item size
+ * and offset values to position the active indicator.
+ * @param selected Whether this item is selected.
+ * @param onClick Called when this item is clicked.
+ * @param content Item content.
  */
 @Composable
 fun RowScope.SegmentItem(
-    onSizeChanged: (Offset, Offset) -> Unit,
-    onValueChanged: (Offset, Offset) -> Unit,
+    onStateChanged: (SegmentItemState) -> Unit,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    onClick: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
-    var size by remember { mutableStateOf(Offset.Zero) }
-    var position by remember { mutableStateOf(Offset.Zero) }
+    var segmentItemState by remember { mutableStateOf(SegmentItemState()) }
     Box(
-        modifier = Modifier
-            .padding(5.dp)
+        modifier = modifier
             .weight(1f)
-            .wrapContentHeight()
             .onSizeChanged {
-                size = Offset(it.width.toFloat(), it.height.toFloat())
+                val size = Size(it.width.toFloat(), it.height.toFloat())
+                segmentItemState = segmentItemState.copy(size = size)
+                onStateChanged(segmentItemState)
             }
             .onGloballyPositioned { coordinates ->
-                position = Offset(
+                val center = Offset(
                     coordinates.boundsInParent().center.x,
                     coordinates.boundsInParent().center.y
                 )
-                onSizeChanged(size, position)
+                segmentItemState = segmentItemState.copy(center = center)
+                if (selected) {
+                    onStateChanged(segmentItemState)
+                }
             }
             .pointerInput("click") {
                 detectTapGestures(
                     onTap = {
-                        onValueChanged(size, position)
+                        onStateChanged(segmentItemState)
+                        onClick()
                     }
                 )
             },
